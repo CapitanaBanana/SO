@@ -11,8 +11,7 @@ printf("\n----------------------------------------\n");
 }
 int main() {
 char buffer[1024];
-// Buffer donde se almacenará la información de las
-tareas
+// Buffer donde se almacenará la información de las tareas
 long bytes_read;
 // Llamada al sistema para obtener la información de los procesos
 bytes_read = syscall(SYS_get_task_info, buffer, sizeof(buffer));
