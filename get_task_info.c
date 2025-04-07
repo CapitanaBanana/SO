@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <string.h>
-#define SYS_get_task_info 452
+#define SYS_get_task_info 468
 void print_task_info(const char *info) {
 printf("\nInformación de los procesos en ejecución:\n");
 printf("----------------------------------------\n");
