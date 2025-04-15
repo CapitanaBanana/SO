@@ -1,9 +1,22 @@
-obj-y     = fork.o exec_domain.o panic.o \ 
-       cpu.o exit.o softirq.o resource.o \ 
-       sysctl.o capability.o ptrace.o user.o \ 
-       signal.o sys.o umh.o workqueue.o pid.o task_work.o \ 
-       extable.o params.o \ 
-       kthread.o sys_ni.o nsproxy.o \ 
-       notifier.o ksysfs.o cred.o reboot.o \ 
-       async.o range.o smpboot.o ucount.o regset.o \ 
-       my_sys_call.o 
+# Nombre del módulo (sin extensión)
+MODULE_NAME := memory
+
+# Compilación del módulo
+obj-m := $(MODULE_NAME).o
+
+# Ruta al build del kernel
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
+all:
+	make -C $(KDIR) M=$(PWD) modules
+
+clean:
+	make -C $(KDIR) M=$(PWD) clean
+	rm -f *.ko *.mod.c *.o *.symvers *.order
+
+run: all
+	sudo insmod $(MODULE_NAME).ko
+	@echo "Módulo cargado:"
+	lsmod | grep $(MODULE_NAME)
+
