@@ -1,31 +1,22 @@
-# Nombre del compilador
-CC = gcc
+# Nombre del módulo (sin extensión)
+MODULE_NAME := memory
 
-# Flags de compilación
-CFLAGS = -Wall -g
+# Compilación del módulo
+obj-m := $(MODULE_NAME).o
 
-# Nombre del ejecutable
-EXEC = get_task_info
+# Ruta al build del kernel
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
 
-# Archivos fuente y objeto
-SRC = get_task_info.c
-OBJ = get_task_info.o
+all:
+	make -C $(KDIR) M=$(PWD) modules
 
-# Regla por defecto: compilar el programa
-all: $(EXEC)
-
-$(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)
-
-# Regla para compilar el archivo fuente a objeto
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Limpiar archivos generados
 clean:
-	rm -f $(EXEC) $(OBJ)
+	make -C $(KDIR) M=$(PWD) clean
+	rm -f *.ko *.mod.c *.o *.symvers *.order
 
-# Ejecutar el programa
-run: $(EXEC)
-	./$(EXEC)
+run: all
+	sudo insmod $(MODULE_NAME).ko
+	@echo "Módulo cargado:"
+	lsmod | grep $(MODULE_NAME)
 
