@@ -1,19 +1,21 @@
 # Nombre del módulo (sin extensión)
-obj-m  memory.o
-# Directorio con el código fuente del kernel
-KDIR  /lib/modules/$(shell uname -r)/build
-# Directorio actual
-PWD  $(shell pwd)
-# Compilar el módulo
+MODULE_NAME := memory
+
+# Compilación del módulo
+obj-m := $(MODULE_NAME).o
+
+# Ruta al build del kernel
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
 all:
-$(MAKE) -C $(KDIR) M=$(PWD) modules
-# Limpiar archivos generados
+	make -C $(KDIR) M=$(PWD) modules
+
 clean:
-$(MAKE) -C $(KDIR) M=$(PWD) clean
-# Cargar y descargar el módulo
+	make -C $(KDIR) M=$(PWD) clean
+	rm -f *.ko *.mod.c *.o *.symvers *.order
+
 run: all
-su -c "/sbin/insmod memory.ko"
-su -c "dmesg | tail -n 10"
-sleep 2
-su -c "/sbin/rmmod memory"
-su -c "dmesg | tail -n 10"
+	sudo insmod $(MODULE_NAME).ko
+	@echo "Módulo cargado:"
+	lsmod | grep $(MODULE_NAME)
